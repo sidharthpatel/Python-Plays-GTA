@@ -3,6 +3,15 @@ from PIL import ImageGrab
 import cv2
 import time
 from directkeys import PressKey, ReleaseKey, W, A, S, D
+
+def draw_lines(img, lines):
+    try:
+        for line in lines:
+            coords = line[0]
+            cv2.line(img, (coords[0], coords[1]), (coords[2], coords[3]), [255,255,255], 3)
+    except:
+        pass
+
 '''
     Region of Interest
     Given that the window size is (0,0) to (800,600)
@@ -18,20 +27,22 @@ def roi(img, vertices):
     masked = cv2.bitwise_and(img, mask)
     return masked
 
-
 def process_img(original_image):
     # Convert an image to GrayScale
     processed_img = cv2.cvtColor(original_image, cv2.COLOR_BGR2GRAY)
 
     # Apply edge detection
-    processed_img = cv2.Canny(processed_img, threshold1=150, threshold2=250)
+    processed_img = cv2.Canny(processed_img, threshold1=100, threshold2=200)
+
+    processed_img = cv2.GaussianBlur(processed_img, (5,5), 0.5)
 
     # Vertices
     vertices = np.array([[0,600],[0,150],[800,150],[800,600],[600,400],[200,400]])
 
     processed_img = roi(processed_img, [vertices])
 
-    lines = cv2.HoughLines
+    lines = cv2.HoughLinesP(processed_img, 1, np.pi/180, 180, 50, 15)
+    draw_lines(processed_img, lines)
 
     return processed_img
 
