@@ -41,7 +41,7 @@ def process_img(original_image):
 
     processed_img = roi(processed_img, [vertices])
 
-    lines = cv2.HoughLinesP(processed_img, 1, np.pi/180, 180, 50, 15)
+    lines = cv2.HoughLinesP(processed_img, 1, np.pi/180, 180, np.array([]), 100, 5)
     draw_lines(processed_img, lines)
 
     return processed_img
