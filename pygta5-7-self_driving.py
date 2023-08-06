@@ -55,7 +55,7 @@ def draw_lanes(img, lines, color=[0, 255, 255], thickness=3):
                 x_coords = (xyxy[0],xyxy[2])
                 y_coords = (xyxy[1],xyxy[3])
                 A = vstack([x_coords,ones(len(x_coords))]).T
-                m, b = lstsq(A, y_coords)[0]
+                m, b = lstsq(A, y_coords, rcond=None)[0]
 
                 # Calculating our new, and improved, xs
                 x1 = (min_y-b) / m
@@ -124,7 +124,7 @@ def draw_lanes(img, lines, color=[0, 255, 255], thickness=3):
 
 def process_img(original_image):
     # Convert an image to GrayScale
-    # processed_img = cv2.cvtColor(original_image, cv2.COLOR_BGR2GRAY)
+    processed_img = cv2.cvtColor(original_image, cv2.COLOR_BGR2GRAY)
 
     # Apply edge detection
     processed_img = cv2.Canny(original_image, threshold1=150, threshold2=250)
@@ -181,6 +181,11 @@ def slow_down():
 
 
 def main():
+
+    for i in list(range(4))[::-1]:
+        print(i+1)
+        time.sleep(1)
+
     # Record the current time
     last_time = time.time()
 
@@ -188,16 +193,20 @@ def main():
         # Capture the screen ratio (0, 40) to (800, 600)
         # Captures GTA
         screen = np.array(ImageGrab.grab(bbox=(0, 40, 800, 600)))
-        new_screen, original_image = process_img(screen)
-
-        # Return the time it took to loop through per image
-        print('Loop took {} seconds'.format(time.time() - last_time))
+        new_screen, original_image, m1, m2 = process_img(screen)
 
         # Display the processed image with edge detection
         cv2.imshow('window', new_screen)
 
         # Show the captured frames using OpenCV
         cv2.imshow('window2', cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB))
+
+        if m1 < 0 and m2 < 0:
+            right()
+        elif m1 > 0 and m2 > 0:
+            left()
+        else:
+            straight()
 
         # Kill OpenCV if `q` is pressed
         # WaitKey(x) -> wait for x milliseconds and check if the q key is pressed
