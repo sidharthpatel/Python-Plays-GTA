@@ -124,10 +124,10 @@ def draw_lanes(img, lines, color=[0, 255, 255], thickness=3):
 
 def process_img(original_image):
     # Convert an image to GrayScale
-    processed_img = cv2.cvtColor(original_image, cv2.COLOR_BGR2GRAY)
+    # processed_img = cv2.cvtColor(original_image, cv2.COLOR_BGR2GRAY)
 
     # Apply edge detection
-    processed_img = cv2.Canny(original_image, threshold1=100, threshold2=200)
+    processed_img = cv2.Canny(original_image, threshold1=150, threshold2=250)
 
     processed_img = cv2.GaussianBlur(processed_img, (5,5), 0.5)
 
