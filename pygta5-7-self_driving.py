@@ -114,7 +114,7 @@ def draw_lanes(img, lines, color=[0, 255, 255], thickness=3):
         l1_x1, l1_y1, l1_x2, l1_y2 = average_lane(final_lanes[lane1_id])
         l2_x1, l2_y1, l2_x2, l2_y2 = average_lane(final_lanes[lane2_id])
 
-        return [l1_x1, l1_y1, l1_x2, l1_y2], [l2_x1, l2_y1, l2_x2, l2_y2]
+        return [l1_x1, l1_y1, l1_x2, l1_y2], [l2_x1, l2_y1, l2_x2, l2_y2], lane1_id, lane2_id
     except Exception as e:
         print(str(e))
 
@@ -138,8 +138,10 @@ def process_img(original_image):
 
     lines = cv2.HoughLinesP(processed_img, 1, np.pi/180, 180, np.array([]), 100, 5)
     # draw_lines(processed_img, lines)
+    m1 = 0
+    m2 = 0
     try:
-        l1, l2 = draw_lanes(original_image, lines)
+        l1, l2, m1, m2 = draw_lanes(original_image, lines)
         cv2.line(original_image, (l1[0], l1[1]), (l1[2], l1[3]), [0,255,0], 30)
         cv2.line(original_image, (l2[0], l2[1]), (l2[2], l2[3]), [0,255,0], 30)
     except Exception as e:
@@ -155,7 +157,28 @@ def process_img(original_image):
     except Exception as e:
         pass
 
-    return processed_img, original_image
+    return processed_img, original_image, m1, m2
+
+def straight():
+    PressKey(W)
+    ReleaseKey(A)
+    ReleaseKey(D)
+
+def left():
+    PressKey(A)
+    ReleaseKey(W)
+    ReleaseKey(D)
+
+def right():
+    PressKey(D)
+    ReleaseKey(W)
+    ReleaseKey(A)
+
+def slow_down():
+    ReleaseKey(W)
+    ReleaseKey(A)
+    ReleaseKey(D)
+
 
 def main():
     # Record the current time
